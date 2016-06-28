@@ -7,7 +7,8 @@ from kivy.clock import Clock
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import ObjectProperty
 
-from hardware import conveyor
+#from hardware import conveyor
+from hardware import rgb_led
 
 class MyGridLayout(GridLayout):
     message = ObjectProperty(None)
@@ -28,18 +29,25 @@ class MyGridLayout(GridLayout):
         self.message.text = 'conveyor index event callback'
     def cb_msg_bit6(self):
         self.message.text = 'bit 6 event callback'
+        rgb_led.red()
     def cb_msg_bit7(self):
         self.message.text = 'bit 7 event callback'
+        rgb_led.green()
     def cb_msg_bit8(self):
         self.message.text = 'bit 8 event callback'
+        rgb_led.blue()
     def cb_msg_bit9(self):
         self.message.text = 'bit 9 event callback'
+        rgb_led.white()
     def cb_msg_bit10(self):
         self.message.text = 'bit 10 event callback'
+        rgb_led.reset()
     def cb_msg_bit11(self):
         self.message.text = 'bit 11 event callback'
+        rgb_led.set('001') #yellow
     def cb_msg_bit12(self):
         self.message.text = 'bit 12 event callback'
+        rgb_led.flash_red()
     def cb_msg_bit13(self):
         self.message.text = 'bit 13 event callback'
     def cb_msg_bit14(self):
@@ -55,34 +63,24 @@ class MainApp(App):
         return MyGridLayout()
 
 if __name__=="__main__":
-    x=True
-    y=True
+
+    timer2=True
+
     # dt means delta-time
-    def my_timer1(dt):
-        global x
-        x^=True
-        if x:
+    def my_timer2(dt):
+        global timer2
+        timer2^=True
+        if timer2:
             print "tick"
         else:
             print "tock"
 
-    def my_timer2(dt):
-        global y
-        y^=True
-        if y:
-            print "on"
-        else:
-            print "off"
-
-
-
-    # call my_callback every 4 seconds
-    Clock.schedule_interval(my_timer1, .5)
-    Clock.schedule_interval(my_timer2, 2)
 
     try:
-        conveyor.init()
+        rgb_led.init()
+        Clock.schedule_interval(my_timer2, 2)
 
-        MainApp().run()
+        MainApp().run() #in kivy event loop now!!!
+
     finally:
-        conveyor.cleanup()
+        rgb_led.cleanup
